@@ -4,7 +4,6 @@ import os
 
 import aiofreepybox.exceptions
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -54,9 +53,8 @@ class Fs:
         if await self._path_exists(path):
             self._path = os.path.join(self._path, path)
         else:
-            logger.error(
-                "{} path does not exist".format(os.path.join(self._path, path))
-            )
+            logger.error("{} path does not exist".format(
+                os.path.join(self._path, path)))
 
     async def _path_exists(self, path):
         """
@@ -66,9 +64,8 @@ class Fs:
             await self.get_file_info(os.path.join(self._path, path))
             return True
         except aiofreepybox.exceptions.HttpRequestError:
-            logger.debug(
-                "{} path does not exist".format(os.path.join(self._path, path))
-            )
+            logger.debug("{} path does not exist".format(
+                os.path.join(self._path, path)))
             return False
 
     async def archive_files(self, archive):
@@ -128,9 +125,8 @@ class Fs:
         hash_type : `str`
             The type of hash (md5, sha1, ...)
         """
-        self.hash_file_schema["src"] = base64.b64encode(src.encode("utf-8")).decode(
-            "utf-8"
-        )
+        self.hash_file_schema["src"] = base64.b64encode(
+            src.encode("utf-8")).decode("utf-8")
         self.hash_file_schema["hash_type"] = hash_type
         return await self._access.post("fs/hash/", self.hash_file_schema)
 
@@ -162,9 +158,8 @@ class Fs:
         path : `str`
             The path to create
         """
-        self.create_path_schema["path"] = base64.b64encode(path.encode("utf-8")).decode(
-            "utf-8"
-        )
+        self.create_path_schema["path"] = base64.b64encode(
+            path.encode("utf-8")).decode("utf-8")
         return await self._access.post("fs/mkpath/", self.create_path_schema)
 
     async def mv(self, move):
@@ -182,9 +177,8 @@ class Fs:
         dst : `str`
             The new file name
         """
-        self.rename_schema["src"] = base64.b64encode(src.encode("utf-8")).decode(
-            "utf-8"
-        )
+        self.rename_schema["src"] = base64.b64encode(
+            src.encode("utf-8")).decode("utf-8")
         self.rename_schema["dst"] = dst
         return await self._access.post("fs/rename/", self.rename_schema)
 

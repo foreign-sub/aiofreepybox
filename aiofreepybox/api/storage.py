@@ -34,7 +34,8 @@ class Storage:
         id : `int`
         format_data : `dict`
         """
-        return await self._access.put(f"storage/partition/{id}/format", format_data)
+        return await self._access.put(f"storage/partition/{id}/format",
+                                      format_data)
 
     async def get_config(self):
         """
