@@ -48,7 +48,7 @@ app_desc = {
     'app_name': 'aiofreepybox',
     'app_version': aiofreepybox.__version__,
     'device_name': socket.gethostname()
-    }
+}
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +69,8 @@ class Freepybox:
         if not self._is_app_desc_valid(self.app_desc):
             raise InvalidTokenError('Invalid application descriptor')
 
-        cert_path = os.path.join(os.path.dirname(__file__), 'freebox_certificates.pem')
+        cert_path = os.path.join(os.path.dirname(
+            __file__), 'freebox_certificates.pem')
         ssl_ctx = ssl.create_default_context()
         ssl_ctx.load_verify_locations(cafile=cert_path)
 
@@ -141,7 +142,8 @@ class Freepybox:
 
         # Read stored application token
         logger.info('Read application authorization file')
-        app_token, track_id, file_app_desc = self._readfile_app_token(token_file)
+        app_token, track_id, file_app_desc = self._readfile_app_token(
+            token_file)
 
         # If no valid token is stored then request a token to freebox api - Only for LAN connection
         if app_token is None or file_app_desc != app_desc:
@@ -158,7 +160,8 @@ class Freepybox:
 
                 # denied status = authorization failed
                 if status == 'denied':
-                    raise AuthorizationError('The app token is invalid or has been revoked')
+                    raise AuthorizationError(
+                        'The app token is invalid or has been revoked')
 
                 # Pending status : user must accept the app request on the freebox
                 elif status == 'pending':
@@ -174,11 +177,14 @@ class Freepybox:
             logger.info('Application authorization granted')
 
             # Store application token in file
-            self._writefile_app_token(app_token, track_id, app_desc, token_file)
-            logger.info('Application token file was generated: {0}'.format(token_file))
+            self._writefile_app_token(
+                app_token, track_id, app_desc, token_file)
+            logger.info(
+                'Application token file was generated: {0}'.format(token_file))
 
         # Create freebox http access module
-        fbx_access = Access(self._session, base_url, app_token, app_desc['app_id'], timeout)
+        fbx_access = Access(self._session, base_url,
+                            app_token, app_desc['app_id'], timeout)
 
         return fbx_access
 
@@ -237,7 +243,8 @@ class Freepybox:
                 d = json.load(f)
                 app_token = d['app_token']
                 track_id = d['track_id']
-                app_desc = {k: d[k] for k in ('app_id', 'app_name', 'app_version', 'device_name') if k in d}
+                app_desc = {k: d[k] for k in (
+                    'app_id', 'app_name', 'app_version', 'device_name') if k in d}
                 return (app_token, track_id, app_desc)
 
         except FileNotFoundError:

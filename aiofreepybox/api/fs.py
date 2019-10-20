@@ -198,4 +198,3 @@ class Fs:
         Set file task state
         """
         return await self._access.put(f"fs/tasks/{task_id}", update_task_state)
-
