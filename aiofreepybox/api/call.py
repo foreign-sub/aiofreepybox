@@ -45,8 +45,7 @@ class Call:
         Returns the collection of all call entries
         """
         _LOGGER.warning(
-            "Using deprecated get_call_list, please use get_call_log instead"
-        )
+            "Using deprecated get_call_list, please use get_call_log instead")
         return await self.get_calls_log()
 
     async def mark_calls_log_as_read(self):
