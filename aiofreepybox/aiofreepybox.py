@@ -21,6 +21,7 @@ from aiofreepybox.api.airmedia import Airmedia
 from aiofreepybox.api.domain import Domain
 from aiofreepybox.api.player import Player
 from aiofreepybox.api.switch import Switch
+from aiofreepybox.api.vpn import Vpn
 from aiofreepybox.api.lan import Lan
 from aiofreepybox.api.contact import Contact
 from aiofreepybox.api.storage import Storage
@@ -96,6 +97,7 @@ class Freepybox:
         self.domain = Domain(self._access)
         self.player = Player(self._access)
         self.switch = Switch(self._access)
+        self.vpn = Vpn(self._access)
         self.lan = Lan(self._access)
         self.contact = Contact(self._access)
         self.storage = Storage(self._access)
