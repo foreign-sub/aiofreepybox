@@ -36,6 +36,7 @@ from aiofreepybox.api.home import Home
 from aiofreepybox.api.parental import Parental
 from aiofreepybox.api.downloads import Downloads
 from aiofreepybox.api.meta import Meta
+from aiofreepybox.api.sharelink import Sharelink
 from aiofreepybox.api.netshare import Netshare
 from aiofreepybox.api.notifications import Notifications
 from aiofreepybox.api.remote import Remote
@@ -108,6 +109,7 @@ class Freepybox:
         self.parental = Parental(self._access)
         self.downloads = Downloads(self._access)
         self.meta = Meta(self._access)
+        self.sharelink = Sharelink(self._access)
         self.netshare = Netshare(self._access)
         self.notifications = Notifications(self._access)
         self.remote = Remote(self._access)
