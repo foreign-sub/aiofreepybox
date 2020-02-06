@@ -41,6 +41,7 @@ from aiofreepybox.api.netshare import Netshare
 from aiofreepybox.api.notifications import Notifications
 from aiofreepybox.api.remote import Remote
 from aiofreepybox.api.rrd import Rrd
+from aiofreepybox.api.upload import Upload
 from aiofreepybox.api.upnpav import Upnpav
 from aiofreepybox.api.upnpigd import Upnpigd
 
@@ -114,6 +115,7 @@ class Freepybox:
         self.notifications = Notifications(self._access)
         self.remote = Remote(self._access)
         self.rrd = Rrd(self._access)
+        self.upload = Upload(self._access)
         self.upnpav = Upnpav(self._access)
         self.upnpigd = Upnpigd(self._access)
 
