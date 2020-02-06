@@ -33,6 +33,7 @@ from aiofreepybox.api.call import Call
 from aiofreepybox.api.connection import Connection
 from aiofreepybox.api.home import Home
 from aiofreepybox.api.parental import Parental
+from aiofreepybox.api.downloads import Downloads
 from aiofreepybox.api.netshare import Netshare
 from aiofreepybox.api.notifications import Notifications
 from aiofreepybox.api.rrd import Rrd
@@ -101,6 +102,7 @@ class Freepybox:
         self.connection = Connection(self._access)
         self.home = Home(self._access)
         self.parental = Parental(self._access)
+        self.downloads = Downloads(self._access)
         self.netshare = Netshare(self._access)
         self.notifications = Notifications(self._access)
         self.rrd = Rrd(self._access)
