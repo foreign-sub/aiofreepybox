@@ -9,6 +9,7 @@ import asyncio
 import m3u8
 
 from aiofreepybox import Freepybox
+from aiofreepybox.exceptions import (NotOpenError, AuthorizationError)
 
 
 async def demo():
@@ -17,21 +18,30 @@ async def demo():
     fbx = Freepybox()
 
     # To find out the HTTPS host and port of your freebox, go to
-    # http://mafreebox.freebox.fr/api_version
+    # http://mafreebox.freebox.fr/api_version or let auto detect do it for you
 
     # Connect to the freebox
     # Be ready to authorize the application on the Freebox if you use this
     # example for the first time
-    await fbx.open(host='abcdefgh.fbxos.fr', port=1234)
+
+    try:
+        await fbx.open()
+    except NotOpenError as e:
+        print(f"Something went wrong {e}")
+    except AuthorizationError as e:
+        print(str(e))
 
     if fbx.api_version == 'v6':
         # Get a jpg snapshot from a camera
         fbx_cam_jpg = await fbx.home.get_camera_snapshot()
+        fbx_cam_jpg.close()
 
         # Get a TS stream from a camera
         r = await fbx.home.get_camera_stream_m3u8()
         m3u8_obj = m3u8.loads(await r.text())
+        r.close()
         fbx_ts = await fbx.home.get_camera_ts(m3u8_obj.files[0])
+        fbx_ts.close()
 
     # Dump freebox configuration using system API
     # Extract temperature and mac address
