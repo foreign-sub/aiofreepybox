@@ -1,93 +1,71 @@
+import operator
 import time
+from typing import Any, Dict, List, Optional
+
+from aiofreepybox.access import Access
+
+_UPTO_V5_FIELDS_TEMP = ["cpub", "cpum", "hdd", "sw"]
+_UPTO_V5_FIELDS_FAN = ["fan_speed"]
 
 
 class Rrd:
+    """
+    Rrd
+    """
 
-    def __init__(self, access):
+    def __init__(self, access: Access) -> None:
+        self._setup = False
         self._access = access
 
-    db = [
-        'net',
-        'temp',
-        'dsl',
-        'switch'
-    ]
-
-    fields = [
-        'bw_down',
-        'bw_up',
-        'cpub',
-        'cpum',
-        'fan_speed',
-        'hdd',
-        'rate_down',
-        'rate_up',
-        'snr_down',
-        'snr_up',
-        'sw',
-        'rx_1',
-        'rx_2',
-        'rx_3',
-        'rx_4',
-        'tx_1',
-        'tx_2',
-        'tx_3',
-        'tx_4',
-        'femto',
-        'vpn_rate_down',
-        'vpn_rate_up',
-        'time'
-    ]
-
+    db = ["net", "temp", "dsl", "switch"]
+    fields = ["time"]
     fields_net = [
-        fields[0],
-        fields[1],
-        fields[6],
-        fields[7],
-        fields[20],
-        fields[21]
+        "bw_down",
+        "bw_up",
+        "rate_down",
+        "rate_up",
+        "vpn_rate_down",
+        "vpn_rate_up",
     ]
-
-    fields_temp = [
-        fields[2],
-        fields[3],
-        fields[4],
-        fields[5],
-        fields[10],
-        fields[19]
-    ]
-
-    fields_dsl = [
-        fields[6],
-        fields[7],
-        fields[8],
-        fields[9]
-    ]
-
-    fields_switch_rx = [
-        fields[11],
-        fields[12],
-        fields[13],
-        fields[14]
-   ]
-
-    fields_switch_tx = [
-        fields[15],
-        fields[16],
-        fields[17],
-        fields[18]
-   ]
-
+    fields_fans: List[str] = []
+    fields_temp: List[str] = []
+    fields_temps: List[str] = []
+    fields_dsl = ["rate_down", "rate_up", "snr_down", "snr_up"]
+    fields_switch_rx = ["rx_1", "rx_2", "rx_3", "rx_4"]
+    fields_switch_tx = ["tx_1", "tx_2", "tx_3", "tx_4"]
     rrd_data_schema = {
-        'dateStart': int(time.time() - 3600),
-        'dateEnd': int(time.time()),
-        'db': db[0],
-        'fields': fields,
-        'precision': 10
+        "dateStart": int(time.time() - 3600),
+        "dateEnd": int(time.time()),
+        "db": db[0],
+        "fields": fields_net,
+        "precision": 10,
     }
 
-    async def get_rrd_stats(self, rrd_data=rrd_data_schema):
-        '''
+    async def init(self) -> None:
+        """
+        Init
+            Call init on startup to setup temp and fans fields
+        """
+
+        if not self._setup:
+            a_v = self._access.base_url.split("/")
+            s_a_v = a_v[(a_v.__len__() - 2)][1:]
+
+            if int(s_a_v) > 5:
+                resp = await self._access.get("system/")
+                self.fields_temp = list(map(operator.itemgetter("id"), resp["sensors"]))
+                self.fields_fans = list(map(operator.itemgetter("id"), resp["fans"]))
+            else:
+                self.fields_temp = _UPTO_V5_FIELDS_TEMP
+                self.fields_fans = _UPTO_V5_FIELDS_FAN
+
+            self.fields_temps = self.fields_temp + self.fields_fans
+            self._setup = True
+
+    async def get_rrd_stats(
+        self, rrd_data: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
+        """
         Get rrd stats
-        '''
-        return await self._access.post('rrd/', rrd_data)
+        """
+        return await self._access.post("rrd/", rrd_data)
